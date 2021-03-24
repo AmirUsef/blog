@@ -1,0 +1,59 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+h1 {
+    text-align: right;
+}
+
+div {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    flex-direction: column;
+    justify-content: space-evenly;
+}
+
+span input,
+select {
+    width: 250px;
+    position: absolute;
+    right: 100px;
+    border: none;
+    border-bottom: 2px solid gray;
+    text-align: center;
+}
+
+.modal-body p {
+    position: absolute;
+    right: 350px;
+    color: red;
+}
+
+div span {
+    text-align: right;
+    position: relative;
+}
+
+span a {
+    position: absolute;
+    right: 375px;
+}
+
+.saveBtn {
+    border: 1px solid rgb(38, 153, 10);
+    background-color: rgb(38, 153, 10);
+    border-radius: 5px;
+}
+
+.logout,
+.deleteBtn {
+    width: 130px;
+}
+
+.alert {
+    display: none;
+    width: 100%;
+    position: fixed;
+    top: 100px;
+}
