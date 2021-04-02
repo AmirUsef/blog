@@ -1,27 +1,22 @@
 $(document).ready(function() {
-    $(".alert .close").click(function() {
-        $(".alert").css("display", "none");
-    });
     $("#submit").click(function() {
         if (validateInputs()) {
-            let user = { username: $("#input1").val(), password: $("#input2").val() }
+            let user = { username: $("#input1").val().trim(), password: $("#input2").val() }
             $.ajax({
                 type: "POST",
-                url: "http://localhost:3000/auth/login",
+                url: "/auth/login",
                 data: user,
                 async: false,
                 success: function(result) {
                     window.location.href = `http://localhost:3000/user/dashboard`
                 },
-                error: function(xhr, status, error) {
-                    if (xhr.status == 404) {
-                        $(".alert p").html("کاربر یافت نشد")
-                        $(".alert").css("display", "block")
-                    }
-                    if (xhr.status == 500) {
-                        $(".alert p").html("خطای سرور")
-                        $(".alert").css("display", "block")
-                    }
+                error: function(error) {
+                    $('.toast').toast({ delay: 5000 });
+                    $('.toast').toast('show')
+                    if (error.status == 404)
+                        $(".toast-body").html("اکانت یافت نشد")
+                    if (error.status == 500)
+                        $(".toast-body").html("خطای سرور")
                 }
             });
         }

@@ -2,14 +2,13 @@ const express = require("express")
 const router = express.Router()
 const userRouter = require('./user')
 const authRouter = require('./auth')
-const commentRouter = require('./comment')
 const articleRouter = require('./article')
 const User = require('../models/User')
+const generalTools = require('../tools/general-tools')
 
-router.use('/user', userRouter)
+router.use('/user', generalTools.loginChecker, userRouter)
 router.use('/auth', authRouter)
-    // router.use('/comment', commentRouter)
-    // router.use('/article', articleRouter)
+router.use('/article', generalTools.loginChecker, articleRouter)
 
 router.post('/createAdmin', async(req, res) => {
     try {

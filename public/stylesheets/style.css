@@ -251,11 +251,11 @@ select option[value=""][disabled] {
     bottom: -30px;
 }
 
-.alert {
-    position: absolute;
+.toast {
+    background-color: red;
     width: 100%;
-    top: -60px;
-    left: 0px;
+    position: fixed;
+    top: 50px;
+    right: 50px;
     text-align: right;
-    display: none;
 }

@@ -1,34 +1,29 @@
 $(document).ready(function() {
-    $(".alert .close").click(function() {
-        $(".alert").css("display", "none");
-    });
     $("#submit").click(function() {
         if (validateInputs()) {
             const user = {
-                firstName: $("#input1").val(),
-                lastName: $("#input2").val(),
-                username: $("#input3").val(),
+                firstName: $("#input1").val().trim(),
+                lastName: $("#input2").val().trim(),
+                username: $("#input3").val().trim(),
                 phoneNumber: $("#input4").val(),
                 gender: $("#input5").val(),
                 password: $("#input6").val()
             }
             $.ajax({
                 type: "POST",
-                url: "http://localhost:3000/auth/register",
+                url: "/auth/register",
                 data: user,
                 async: false,
                 success: function() {
                     window.location.href = 'http://localhost:3000/auth/loginpage'
                 },
-                error: function(xhr, status, error) {
-                    if (xhr.status == 409) {
-                        $(".alert p").html("اکانت با این مشخصات وجود دارد")
-                        $(".alert").css("display", "block")
-                    }
-                    if (xhr.status == 500) {
-                        $(".alert p").html("خطای سرور")
-                        $(".alert").css("display", "block")
-                    }
+                error: function(error) {
+                    $('.toast').toast({ delay: 5000 });
+                    $('.toast').toast('show')
+                    if (error.status == 409)
+                        $(".toast-body").html("اکانت با این مشخصات وجود دارد")
+                    if (error.status == 500)
+                        $(".toast-body").html("خطای سرور")
                 }
             });
         }
@@ -44,13 +39,13 @@ function validateInputs() {
     const pass2 = $("#input7").val();
     if (firstName == "")
         $("#error1").html("الزامی")
-    else if (!(/^[a-zA-Z\s]*$/).test(firstName))
+    else if (!(/^[a-zA-Z\s]*$/).test(firstName) || firstName.length < 3 || firstName.length > 15)
         $("#error1").html("نام معتبر نیست")
     else
         $("#error1").html("")
     if (lastName == "")
         $("#error2").html("الزامی")
-    else if (!(/^[a-zA-Z\s]*$/).test(lastName))
+    else if (!(/^[a-zA-Z\s]*$/).test(lastName) || lastName.length < 3 || lastName.length > 15)
         $("#error2").html("نام معتبر نیست")
     else
         $("#error2").html("")

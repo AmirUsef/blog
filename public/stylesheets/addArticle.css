@@ -1,0 +1,12 @@
+.toast {
+    background-color: red;
+    width: 100%;
+    position: fixed;
+    top: 50px;
+    right: 50px;
+    text-align: right;
+}
+
+.note-editor {
+    width: 100%;
+}

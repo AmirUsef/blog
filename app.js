@@ -6,8 +6,8 @@ const logger = require('morgan');
 const session = require('express-session');
 const mongoose = require('mongoose');
 const config = require('./config/config');
-
 const api = require('./routes/api');
+require('./tools/initializer')
 
 const app = express();
 

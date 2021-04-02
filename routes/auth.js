@@ -8,12 +8,16 @@ const {
     loginPage,
     login,
     logout
-} = require("../controllers/authenticationController");
+} = require("../controllers/auth.controller");
 
 router.get("/registerpage", generalTools.sessionChecker, rgisterPage);
+
 router.post("/register", register);
+
 router.get("/loginpage", generalTools.sessionChecker, loginPage);
+
 router.post("/login", login);
+
 router.get("/logout", logout);
 
 

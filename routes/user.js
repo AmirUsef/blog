@@ -1,16 +1,21 @@
 const express = require('express');
 const router = express.Router();
-const generalTools = require('../tools/general-tools')
 
 const {
     dashboardPage,
+    addArticlePage,
     updateUser,
+    updateAvatar,
     deleteUser
-} = require("../controllers/userController");
+} = require("../controllers/user.controller");
 
-router.get('/dashboard', generalTools.loginChecker, dashboardPage)
+router.get('/dashboard', dashboardPage)
+
+router.get('/addArticle', addArticlePage)
 
 router.post('/update', updateUser)
+
+router.post('/avatar', updateAvatar)
 
 router.delete('/delete', deleteUser)
 

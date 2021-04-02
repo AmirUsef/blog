@@ -1,1 +1,6 @@
 node_modules
+articles
+temp
+/public/images/avatars/*
+!article.png
+!profile.png
