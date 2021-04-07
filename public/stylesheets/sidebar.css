@@ -161,7 +161,8 @@ a.article:hover {
     width: 100%;
 }
 
-.deleteBtn {
+.deleteBtn,
+.myArticles {
     cursor: pointer;
 }
 

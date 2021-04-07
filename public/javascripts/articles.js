@@ -1,5 +1,21 @@
 $(document).ready(function() {
     pagInation()
+    $(".delete").click(function() {
+        const id = $(this).attr("articleId")
+        $.ajax({
+            type: "DELETE",
+            url: `/article/${id}`,
+            async: false,
+            success: function() {
+                window.location.href = 'http://localhost:3000/article/myArticles'
+            },
+            error: function(error) {
+                $('.toast').toast({ delay: 5000 });
+                $('.toast').toast('show')
+                $(".toast-body").html("خطای سرور")
+            }
+        })
+    })
 })
 
 

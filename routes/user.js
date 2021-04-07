@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const acc = require('../tools/access-control')
 
 const {
     dashboardPage,
@@ -13,10 +14,10 @@ router.get('/dashboard', dashboardPage)
 
 router.get('/addArticle', addArticlePage)
 
-router.post('/update', updateUser)
+router.put('/:id', acc.editUser, updateUser)
 
-router.post('/avatar', updateAvatar)
+router.post('/avatar/:id', acc.editUser, updateAvatar)
 
-router.delete('/delete', deleteUser)
+router.delete('/:id', acc.editUser, deleteUser)
 
 module.exports = router;

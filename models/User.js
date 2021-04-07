@@ -15,14 +15,12 @@ const UserSchema = new Schema({
         ...requiredFields,
         minlength: 3,
         maxlength: 15,
-        lowercase: true,
         match: [/^[a-zA-Z\s]*$/, 'firstName is not valid']
     },
     lastName: {
         ...requiredFields,
         minlength: 3,
         maxlength: 15,
-        lowercase: true,
         match: [/^[a-zA-Z\s]*$/, 'lastName is not valid']
     },
     username: {
@@ -98,8 +96,8 @@ UserSchema.pre('save', function(next) {
 });
 
 UserSchema.pre('updateOne', function(next) {
-    this.getUpdate().lastUpdate = Date.now()
-    let user = this.getUpdate()
+    this._update.lastUpdate = Date.now()
+    let user = this._update
     if (user.password) {
         bcrypt.genSalt(10, function(err, salt) {
             if (err) return next(err)

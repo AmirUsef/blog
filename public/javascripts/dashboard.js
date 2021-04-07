@@ -1,11 +1,12 @@
 $(document).ready(function() {
+    $(".myArticles").attr('href', `/article/myArticles/${window.localStorage.getItem('userId')}`)
     $('#sidebarCollapse').on('click', function() {
         $('#sidebar').toggleClass('active');
     });
     $(".deleteBtn").click(function() {
         $.ajax({
             type: "DELETE",
-            url: "/user/delete",
+            url: `/user/${window.localStorage.getItem('userId')}`,
             async: false,
             success: function() {
                 window.location.href = 'http://localhost:3000/auth/loginpage'

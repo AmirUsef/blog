@@ -28,7 +28,7 @@ const updateUser = async(req, res) => {
         return res.status(400).send()
     let user
     try {
-        user = await User.findOne({ _id: req.session.user._id })
+        user = await User.findOne({ _id: req.params.id })
         if (!user) return res.status(500).send()
     } catch (error) {
         return res.status(500).send()
@@ -37,22 +37,23 @@ const updateUser = async(req, res) => {
         try {
             const isEqualPass = await user.comparePassword(req.body.password)
             if (!isEqualPass) return res.status(404).send()
-            user = await user.updateOne({ password: req.body.newpassword }, { new: true, runValidators: true, useFindAndModify: false })
+            await user.updateOne({ password: req.body.newpassword }, { new: true, runValidators: true, useFindAndModify: false })
             return res.status(200).send()
         } catch (error) {
             return res.status(500).send()
         }
 
-    } else {
-        try {
-            user = await User.findByIdAndUpdate({ _id: req.session.user._id }, req.body, { new: true, runValidators: true, useFindAndModify: false })
-        } catch (error) {
-            if (error.code == 11000) return res.status(409).send()
-            return res.status(500).send()
-        }
-        req.session.user = user
-        res.status(200).send()
     }
+    try {
+        req.body.lastUpdate = Date.now()
+        user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true, useFindAndModify: false })
+    } catch (error) {
+        if (error.code == 11000) return res.status(409).send()
+        return res.status(500).send()
+    }
+    if (req.session.user.role === 'blogger')
+        req.session.user = user
+    res.status(200).send()
 }
 
 const updateAvatar = async(req, res) => {
@@ -63,14 +64,15 @@ const updateAvatar = async(req, res) => {
 
             return res.status(400).send()
         }
-        if (req.session.user.avatar != 'profile.png') {
+        if (req.session.user.role != 'admin' && req.session.user.avatar != 'profile.png') {
             fs.unlink(`./public/images/avatars/${req.session.user.avatar}`, (err) => {
                 if (err) console.log(err);
             })
         }
         try {
-            user = await User.findByIdAndUpdate({ _id: req.session.user._id }, { avatar: req.file.filename }, { new: true, runValidators: true, useFindAndModify: false })
-            req.session.user = user
+            user = await User.findByIdAndUpdate({ _id: req.params.id }, { avatar: req.file.filename }, { new: true, runValidators: true, useFindAndModify: false })
+            if (req.session.user.role === 'blogger')
+                req.session.user = user
             res.redirect('/user/dashboard')
         } catch (error) {
             return res.status(500).send()
@@ -80,12 +82,13 @@ const updateAvatar = async(req, res) => {
 
 const deleteUser = async(req, res) => {
     try {
-        const user = await User.findById(req.session.user._id)
+        const user = await User.findById(req.params.id)
         await user.deleteOne()
     } catch (error) {
         return res.status(500).send()
     }
-    res.clearCookie('user_sid')
+    if (req.session.user.role === 'blogger')
+        res.clearCookie('user_sid')
     res.status(202).send();
 }
 

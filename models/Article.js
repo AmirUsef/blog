@@ -44,9 +44,17 @@ ArticleSchema.methods.toJSON = function() {
 
 ArticleSchema.pre('save', function(next) {
     generalTools.copyFiles(this._id, this.text, this.owner)
-    this.text = this.text.replace(`temp/${this.owner}-temp`, `articles/${this._id}`);
+    this.text = this.text.replaceAll(`temp/${this.owner}-temp`, `articles/${this._id}`);
     next()
 });
+
+ArticleSchema.pre('updateOne', function(next) {
+    this._update.lastUpdate = Date.now()
+    generalTools.deleteFiles(this._update._id, this._update.text)
+    generalTools.copyFiles(this._update._id, this._update.text, this._update.owner)
+    this._update.text = this._update.text.replaceAll(`temp/${this._update.owner}-temp`, `articles/${this._update._id}`);
+    next()
+})
 
 ArticleSchema.pre('deleteOne', { document: true, query: false }, function(next) {
     try {

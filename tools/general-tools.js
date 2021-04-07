@@ -56,6 +56,7 @@ const articleStorage = multer.diskStorage({
 generalTools.uploadArticleImage = multer({
     storage: articleStorage,
     fileFilter: function(req, file, cb) {
+        console.log("file:" + file);
         if (file.mimetype === 'image/png' || file.mimetype === 'image/jpg' || file.mimetype === 'image/jpeg')
             cb(null, true)
         else
@@ -65,7 +66,9 @@ generalTools.uploadArticleImage = multer({
 
 generalTools.copyFiles = function(dirName, text, id) {
     try {
-        fs.mkdirSync(path.join(__dirname, '../public/images/articles/' + dirName))
+        if (!fs.existsSync(path.join(__dirname, '../public/images/articles/' + dirName)))
+            fs.mkdirSync(path.join(__dirname, '../public/images/articles/' + dirName))
+
         files = fs.readdirSync(path.join(__dirname, `../public/images/temp/${id}-temp`))
         files.forEach(file => {
             if (text.includes(file)) {
@@ -73,6 +76,18 @@ generalTools.copyFiles = function(dirName, text, id) {
             }
         });
         rimraf.sync(path.join(__dirname, `../public/images/temp/${id}-temp`))
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+generalTools.deleteFiles = function(dirName, text) {
+    try {
+        files = fs.readdirSync(path.join(__dirname, `../public/images/articles/${dirName}`))
+        files.forEach(file => {
+            if (!text.includes(file))
+                fs.unlinkSync(path.join(__dirname, `../public/images/articles/${dirName}/${file}`))
+        });
     } catch (error) {
         console.log(error);
     }

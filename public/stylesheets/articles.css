@@ -87,3 +87,11 @@
     right: 50px;
     text-align: right;
 }
+
+.delete {
+    background-color: red;
+}
+
+.edit {
+    background-color: green;
+}

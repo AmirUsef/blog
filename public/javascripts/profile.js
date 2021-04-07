@@ -7,6 +7,7 @@ function checkform() {
     }
 }
 $(document).ready(function() {
+    window.localStorage.setItem('userId', userId)
     $("input[type='file']").change(function() {
         $("form").submit();
     })
@@ -26,8 +27,8 @@ $(document).ready(function() {
 
             updatedObject = { firstName: $(".modal-body input").val() }
             $.ajax({
-                type: "POST",
-                url: `/user/update`,
+                type: "PUT",
+                url: `/user/${userId}`,
                 async: false,
                 data: updatedObject,
                 success: function(result) {
@@ -54,8 +55,8 @@ $(document).ready(function() {
 
             updatedObject = { lastName: $(".modal-body input").val() }
             $.ajax({
-                type: "POST",
-                url: `/user/update`,
+                type: "PUT",
+                url: `/user/${userId}`,
                 async: false,
                 data: updatedObject,
                 success: function(result) {
@@ -81,8 +82,8 @@ $(document).ready(function() {
                 return $(".modal-body p").html("تلفن همراه معتبر نیست")
             updatedObject = { phoneNumber: $(".modal-body input").val() }
             $.ajax({
-                type: "POST",
-                url: `/user/update`,
+                type: "PUT",
+                url: `/user/${userId}`,
                 async: false,
                 data: updatedObject,
                 success: function(result) {
@@ -108,8 +109,8 @@ $(document).ready(function() {
         $(".saveBtn").click(function() {
             updatedObject = { gender: $(".modal-body select").val() }
             $.ajax({
-                type: "POST",
-                url: `/user/update`,
+                type: "PUT",
+                url: `/user/${userId}`,
                 async: false,
                 data: updatedObject,
                 success: function(result) {
@@ -152,8 +153,8 @@ $(document).ready(function() {
                 $(".modal-body p:eq(2)").html("")
             updatedObject = { password, newpassword }
             $.ajax({
-                type: "POST",
-                url: `/user/update`,
+                type: "PUT",
+                url: `/user/${userId}`,
                 async: false,
                 data: updatedObject,
                 success: function(result) {
