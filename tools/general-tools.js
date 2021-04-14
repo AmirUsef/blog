@@ -2,21 +2,9 @@ const multer = require('multer')
 const path = require('path')
 const fs = require('fs')
 const rimraf = require("rimraf");
+const bcrypt = require('bcrypt');
+const config = require('../config/config');
 const generalTools = {};
-
-generalTools.sessionChecker = function(req, res, next) {
-    if (req.cookies.user_sid && req.session.user)
-        return res.redirect('/user/dashboard')
-
-    return next()
-};
-
-generalTools.loginChecker = function(req, res, next) {
-    if (!req.session.user)
-        return res.redirect('/auth/loginPage')
-
-    return next()
-};
 
 const avatarStorage = multer.diskStorage({
     destination: function(req, file, cb) {
@@ -41,11 +29,14 @@ const articleStorage = multer.diskStorage({
     destination: function(req, file, cb) {
         const dir = path.join(__dirname, `../public/images/temp/${req.session.user._id}-temp`)
         try {
-            if (!fs.existsSync(dir))
+            if (!fs.existsSync(dir)) {
                 fs.mkdirSync(dir);
-        } catch (error) {
-            return console.log(error);
-        }
+                setTimeout(function() {
+                    if (fs.existsSync(dir))
+                        rimraf.sync(dir)
+                }, config.sessionExpire);
+            }
+        } catch (error) {}
         cb(null, dir)
     },
     filename: function(req, file, cb) {
@@ -65,10 +56,10 @@ generalTools.uploadArticleImage = multer({
 })
 
 generalTools.copyFiles = function(dirName, text, id) {
-    try {
-        if (!fs.existsSync(path.join(__dirname, '../public/images/articles/' + dirName)))
-            fs.mkdirSync(path.join(__dirname, '../public/images/articles/' + dirName))
+    if (!fs.existsSync(path.join(__dirname, '../public/images/articles/' + dirName)))
+        fs.mkdirSync(path.join(__dirname, '../public/images/articles/' + dirName))
 
+    if (fs.existsSync(path.join(__dirname, `../public/images/temp/${id}-temp`))) {
         files = fs.readdirSync(path.join(__dirname, `../public/images/temp/${id}-temp`))
         files.forEach(file => {
             if (text.includes(file)) {
@@ -76,8 +67,6 @@ generalTools.copyFiles = function(dirName, text, id) {
             }
         });
         rimraf.sync(path.join(__dirname, `../public/images/temp/${id}-temp`))
-    } catch (error) {
-        console.log(error);
     }
 }
 
@@ -88,9 +77,28 @@ generalTools.deleteFiles = function(dirName, text) {
             if (!text.includes(file))
                 fs.unlinkSync(path.join(__dirname, `../public/images/articles/${dirName}/${file}`))
         });
-    } catch (error) {
-        console.log(error);
-    }
+    } catch (error) {}
+}
+
+generalTools.hash = (user, next) => {
+    bcrypt.genSalt(10, function(err, salt) {
+        if (err) return next(err)
+        bcrypt.hash(user.password, salt, function(err, hash) {
+            if (err) return next(err)
+            user.password = hash
+            next()
+        });
+    });
+}
+
+generalTools.generatePassword = () => {
+    const result = []
+    let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
+    for (let i = 0; i < 4; i++)
+        result.push(characters.charAt(Math.floor(Math.random() * characters.length)));
+    for (let i = 0; i < 4; i++)
+        result.push(Math.floor(Math.random() * 10));
+    return result.join('');
 }
 
 module.exports = generalTools;

@@ -15,7 +15,7 @@ $(document).ready(function() {
                 data: user,
                 async: false,
                 success: function() {
-                    window.location.href = 'http://localhost:3000/auth/loginpage'
+                    window.location.href = 'http://localhost:3000/auth/login'
                 },
                 error: function(error) {
                     $('.toast').toast({ delay: 5000 });

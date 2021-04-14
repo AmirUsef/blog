@@ -18,7 +18,8 @@ const ArticleSchema = new Schema({
     },
     text: {
         ...requiredFields,
-        minlength: 20
+        minlength: 20,
+        maxlength: 4000
     },
     createdAt: {
         type: Date,
@@ -59,9 +60,7 @@ ArticleSchema.pre('updateOne', function(next) {
 ArticleSchema.pre('deleteOne', { document: true, query: false }, function(next) {
     try {
         rimraf.sync(path.join(__dirname, `../public/images/articles/${this._id}`))
-    } catch (error) {
-        console.log(error);
-    }
+    } catch (error) {}
     next()
         // Comment.deleteMany({ article: this._id }, (err, comments) => {
         //     if (err) return res.status(500).json({ msg: "Server Error :)", err: err.message });

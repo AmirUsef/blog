@@ -7,7 +7,7 @@ function checkform() {
     }
 }
 $(document).ready(function() {
-    window.localStorage.setItem('userId', userId)
+    const userId = window.localStorage.getItem('userId')
     $("input[type='file']").change(function() {
         $("form").submit();
     })
@@ -158,7 +158,7 @@ $(document).ready(function() {
                 async: false,
                 data: updatedObject,
                 success: function(result) {
-                    location.reload();
+                    window.location.href = 'http://localhost:3000/auth/login'
                 },
                 error: function(error) {
                     if (error.status == 404)

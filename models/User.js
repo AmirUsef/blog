@@ -2,7 +2,8 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const bcrypt = require('bcrypt');
 const Article = require('./Article')
-const fs = require('fs')
+const fs = require('fs');
+const generalTools = require("../tools/general-tools");
 
 const requiredFields = {
     type: String,
@@ -82,32 +83,18 @@ UserSchema.methods.comparePassword = async function(pass) {
 
 UserSchema.pre('save', function(next) {
     const user = this
-    if (this.isNew || this.isModified()) {
-        bcrypt.genSalt(10, function(err, salt) {
-            if (err) return next(err)
-            bcrypt.hash(user.password, salt, function(err, hash) {
-                if (err) return next(err)
-                user.password = hash
-                next()
-            });
-        });
-    } else
+    if (this.isNew || this.isModified())
+        generalTools.hash(user, next)
+    else
         next()
 });
 
 UserSchema.pre('updateOne', function(next) {
     this._update.lastUpdate = Date.now()
     let user = this._update
-    if (user.password) {
-        bcrypt.genSalt(10, function(err, salt) {
-            if (err) return next(err)
-            bcrypt.hash(user.password, salt, function(err, hash) {
-                if (err) return next(err)
-                user.password = hash
-                next()
-            });
-        });
-    } else
+    if (user.password)
+        generalTools.hash(user, next)
+    else
         next()
 })
 
@@ -122,7 +109,7 @@ UserSchema.pre('deleteOne', { document: true, query: false }, async function(nex
         for (let index = 0; index < articles.length; index++)
             await articles[index].deleteOne()
     } catch (error) {
-        return res.status(500).send()
+        return res.status(500).json({ msg: "server error" })
     }
     next()
 });

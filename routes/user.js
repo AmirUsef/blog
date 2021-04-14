@@ -4,6 +4,7 @@ const acc = require('../tools/access-control')
 
 const {
     dashboardPage,
+    getAllUsers,
     addArticlePage,
     updateUser,
     updateAvatar,
@@ -12,12 +13,14 @@ const {
 
 router.get('/dashboard', dashboardPage)
 
+router.get('/AllUsers', acc.admin, getAllUsers)
+
 router.get('/addArticle', addArticlePage)
 
-router.put('/:id', acc.editUser, updateUser)
+router.put('/:id', acc.owner, updateUser)
 
-router.post('/avatar/:id', acc.editUser, updateAvatar)
+router.post('/avatar/:id', acc.owner, updateAvatar)
 
-router.delete('/:id', acc.editUser, deleteUser)
+router.delete('/:id', acc.adminOwner, deleteUser)
 
 module.exports = router;

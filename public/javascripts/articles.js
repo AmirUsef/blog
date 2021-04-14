@@ -7,7 +7,7 @@ $(document).ready(function() {
             url: `/article/${id}`,
             async: false,
             success: function() {
-                window.location.href = 'http://localhost:3000/article/myArticles'
+                location.reload();
             },
             error: function(error) {
                 $('.toast').toast({ delay: 5000 });

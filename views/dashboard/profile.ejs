@@ -29,8 +29,8 @@
                         </form>
                     </div>
                     <div id="inputs" class="d-flex justify-content-end align-content-around flex-wrap">
-                        <span class="mt-5 d-flex flex-row-reverse" id="lastName"><label> :نام خانوادگی </label><input value=<%= user.lastName %> disabled></input><a class="btn btn-primary second-btn" >ویرایش</a></span>
-                        <span class="mt-5 d-flex flex-row-reverse" id="firstName"><label> :نام </label><input value=<%= user.firstName %> disabled></input><a class="btn btn-primary second-btn" >ویرایش</a></span>
+                        <span class="mt-5 d-flex flex-row-reverse" id="lastName"><label> :نام خانوادگی </label><input value="<%= user.lastName %>" disabled></input><a class="btn btn-primary second-btn" >ویرایش</a></span>
+                        <span class="mt-5 d-flex flex-row-reverse" id="firstName"><label> :نام </label><input value="<%= user.firstName %>" disabled></input><a class="btn btn-primary second-btn" >ویرایش</a></span>
                         <span class="mt-5 d-flex flex-row-reverse" id="username"><label> :نام کاربری </label><input value=<%= user.username %> disabled></input></span>
                         <span class="mt-5 d-flex flex-row-reverse" id="password"><label> :پسوورد</label><input value="*****" disabled></input><a class="btn btn-primary second-btn" >ویرایش</a></span>
                         <span class="mt-5 d-flex flex-row-reverse" id="gender"><label> :جنسیت</label><input value=<%= user.gender %> disabled></input><a class="btn btn-primary second-btn" >ویرایش</a></span>
@@ -62,7 +62,8 @@
         </div>
     </div>
     <script>
-        var userId = <%- JSON.stringify(user._id) %>
+        window.localStorage.setItem('userId', <%- JSON.stringify(user._id) %>)
+        window.localStorage.setItem('role', <%- JSON.stringify(user.role) %>)
     </script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>

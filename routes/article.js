@@ -4,7 +4,7 @@ const acc = require('../tools/access-control')
 
 const {
     getAllArticles,
-    getMyArticles,
+    getUserArticles,
     editArticlePage,
     getArticle,
     addArticle,
@@ -15,7 +15,7 @@ const {
 
 router.get("/", getAllArticles)
 
-router.get("/myArticles/:id", acc.myArticles, getMyArticles)
+router.get("/articles/:id", acc.articles, getUserArticles)
 
 router.get("/edit/:id", acc.editArticle, editArticlePage)
 

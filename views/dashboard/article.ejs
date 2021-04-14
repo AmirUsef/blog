@@ -20,8 +20,9 @@
             <div id="content">
                 <%- include('../partials/navbar') %>
                     <div class="d-flex flex-row justify-content-between">
-                        <span class="mt-5 mb-5 d-flex flex-row-reverse"><label> :نویسنده</label><p><%= article.owner.firstName + " " + article.owner.lastName%></p></span>
+                        <span class="mt-5 mb-5 d-flex flex-row-reverse"><label> :تاریخ</label><p><%= article.createdAt.toLocaleString("fa-IR", {dateStyle : "short"}) %></p></span>
                         <span class="mt-5 mb-5 d-flex flex-row-reverse"><label> :عنوان</label><p><%= article.title %></p></span>
+                        <span class="mt-5 mb-5 d-flex flex-row-reverse"><label> :نویسنده</label><p><%= article.owner.firstName + " " + article.owner.lastName%></p></span>
                     </div>
                     <div id="htmlText">
                         <%- article.text %>

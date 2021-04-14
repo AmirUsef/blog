@@ -9,6 +9,12 @@ function checkform() {
         $(".toast-body").html("مقاله بسیار کوتاه است")
         return false
     }
+    if ($("form textarea").val().length > 4000) {
+        $('.toast').toast({ delay: 5000 });
+        $('.toast').toast('show')
+        $(".toast-body").html("مقاله بسیار بزرگ است")
+        return false
+    }
 }
 $(document).ready(function() {
     $('#summernote').summernote({
@@ -20,6 +26,7 @@ $(document).ready(function() {
             ['color', ['color']],
             ['para', ['ul', 'ol', 'paragraph']],
             ['table', ['table']],
+            ['insert', ['ltr', 'rtl']],
             ['insert', ['link', 'picture']],
             ['view', ['fullscreen', 'codeview', 'help']]
         ],
