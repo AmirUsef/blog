@@ -13,7 +13,6 @@ $(document).ready(function() {
                 type: "POST",
                 url: "/auth/register",
                 data: user,
-                async: false,
                 success: function() {
                     window.location.href = 'http://localhost:3000/auth/login'
                 },

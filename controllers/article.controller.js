@@ -1,96 +1,63 @@
 const Article = require('../models/Article')
+const createError = require('http-errors')
+const Comment = require('../models/Comment')
 const generalTools = require('../tools/general-tools')
+const { catchError, deleteDocument } = require('./general.controller')
 const multer = require('multer')
 
-const getArticle = async(req, res) => {
-    try {
-        const article = await Article.findById(req.params.id).populate('owner', { firstName: 1, lastName: 1, avatar: 1, _id: 0 })
-        if (!article)
-            return res.status(404).json({ msg: "Article not found" })
-        res.render('dashboard/article', { article })
-    } catch (error) {
-        res.status(500).json({ msg: "server error" })
-    }
-}
+const requiredFields = ["title", "editordata", "files"]
 
-const getUserArticles = async(req, res) => {
-    let page = req.query.pageno
-    if (!req.query.pageno)
-        page = 1;
-    try {
-        const number = await Article.countDocuments({ owner: req.params.id })
-        const articles = await Article.find({ owner: req.params.id }).populate('owner', { firstName: 1, lastName: 1, avatar: 1, _id: 0 }).sort({ createdAt: -1 }).skip((page - 1) * 6).limit(6)
-        if (isNaN(page) || page < 1 || (number + 6 <= page * 6 && page != 1))
-            return res.status(404).json({ msg: "page not found" })
-        res.render('dashboard/myArticles', { articles, number, role: req.session.user.role })
-    } catch (error) {
-        res.status(500).json({ msg: "server error" })
-    }
-}
+module.exports.getArticle = catchError(async(req, res, next) => {
+    const article = await Article.findOne({ _id: req.params.id })
+    if (!article) return next(createError(404))
+    await article.getComments({ confirmed: true })
+    res.render('dashboard/article', { article, user: req.session.user })
+})
 
-const getAllArticles = async(req, res) => {
-    let page = req.query.pageno
-    if (!req.query.pageno)
-        page = 1;
-    try {
-        const number = await Article.countDocuments({})
-        const articles = await Article.find({}).populate('owner', { firstName: 1, lastName: 1, avatar: 1, _id: 0 }).sort({ createdAt: -1 }).skip((page - 1) * 6).limit(6)
-        if (isNaN(page) || page < 1 || (number + 6 <= page * 6 && page != 1))
-            return res.status(404).json({ msg: "page not found" })
-        res.render('dashboard/allArticles', { articles, number, role: req.session.user.role })
-    } catch (error) {
-        res.status(500).json({ msg: "server error" })
-    }
-}
+module.exports.getArticles = catchError(async(req, res, next) => {
+    const page = req.query.pageno || 1
+    const owner = req.params.id ? { owner: req.params.id } : {}
+    const number = await Article.countDocuments(owner)
+    if (isNaN(page) || page < 1 || (number + 6 <= page * 6 && page != 1))
+        return next(createError(404))
+    const articles = await Article.find(owner).skip((page - 1) * 6).limit(6)
+    if (req.params.id) {
+        for (let index = 0; index < articles.length; index++)
+            await articles[index].countComments({ confirmed: false })
 
-const addArticle = (req, res) => {
-    const keys = Object.keys(req.body);
-    if (!keys.includes("title") || !keys.includes("editordata") || !keys.includes("files") || keys.length != 3)
+        return res.render('dashboard/myArticles', { articles, number, role: req.session.user.role })
+    }
+    res.render('dashboard/allArticles', { articles, number, role: req.session.user.role })
+})
+
+module.exports.addArticle = catchError(async(req, res, next) => {
+    if (!requiredFields.isEqualTo(Object.keys(req.body)))
         return res.status(400).json({ msg: "Article validation failed: incorrect fields" })
 
-    new Article({
+    await new Article({
         title: req.body.title,
         text: req.body.editordata,
         owner: req.session.user._id
-    }).save((err, article) => {
-        if (err) {
-            console.log(err);
-            if (err.name == "ValidationError")
-                return res.status(400).json({ msg: err.message })
+    }).save()
+    res.redirect('/user/dashboard')
+})
 
-            return res.status(500).json({ msg: "server error" })
-        }
-        res.redirect('/user/dashboard')
-    })
-}
+module.exports.editArticlePage = catchError(async(req, res, next) => {
+    const article = await Article.findOne({ _id: req.params.id })
+    await article.getComments({})
+    res.render('dashboard/editArticle', { article })
+})
 
-const editArticlePage = async(req, res) => {
-    try {
-        const article = await Article.findById(req.params.id)
-        res.render('dashboard/editArticle', { article, text: article.text })
-    } catch (error) {
-        return res.status(500).json({ msg: "server error" })
-    }
-}
-
-const editArticle = async(req, res) => {
-    const keys = Object.keys(req.body);
-    if (!keys.includes("title") || !keys.includes("editordata") || !keys.includes("files") || keys.length != 3)
+module.exports.editArticle = catchError(async(req, res) => {
+    if (!requiredFields.isEqualTo(Object.keys(req.body)))
         return res.status(400).json({ msg: "Article validation failed: incorrect fields" })
 
-    try {
-        const article = await Article.findById(req.params.id)
-        await article.updateOne({ title: req.body.title, text: req.body.editordata, _id: article._id, owner: article.owner }, { new: true, runValidators: true })
-        res.redirect(`/article/${article._id}`);
-    } catch (error) {
-        if (err.name == "ValidationError")
-            return res.status(400).json({ msg: err.message })
+    const article = await Article.findById(req.params.id)
+    await article.updateOne({ title: req.body.title, text: req.body.editordata, _id: article._id, owner: article.owner }, { new: true, runValidators: true })
+    res.redirect(`/article/${article._id}`);
+})
 
-        res.status(500).json({ msg: "server error" })
-    }
-}
-
-const addImage = (req, res) => {
+module.exports.addImage = (req, res) => {
     const upload = generalTools.uploadArticleImage.single('file')
     upload(req, res, function(err) {
         if (err) {
@@ -102,23 +69,4 @@ const addImage = (req, res) => {
     })
 }
 
-const deleteArticle = async(req, res) => {
-    try {
-        const article = await Article.findById(req.params.id)
-        await article.deleteOne()
-        res.status(202).send()
-    } catch (error) {
-        res.status(500).json({ msg: "server error" })
-    }
-}
-
-module.exports = {
-    getArticle,
-    getAllArticles,
-    getUserArticles,
-    editArticlePage,
-    addArticle,
-    editArticle,
-    addImage,
-    deleteArticle
-}
+module.exports.deleteArticle = catchError(async(req, res, next) => deleteDocument(req, res, next, Article))

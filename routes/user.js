@@ -13,13 +13,13 @@ const {
 
 router.get('/dashboard', dashboardPage)
 
-router.get('/AllUsers', acc.admin, getAllUsers)
+router.get('/AllUsers', acc.isAdmin, getAllUsers)
 
 router.get('/addArticle', addArticlePage)
 
-router.put('/:id', acc.owner, updateUser)
+router.put('/:id', acc.isOwner, updateUser)
 
-router.post('/avatar/:id', acc.owner, updateAvatar)
+router.post('/avatar/:id', acc.isOwner, updateAvatar)
 
 router.delete('/:id', acc.adminOwner, deleteUser)
 

@@ -13,9 +13,6 @@
 }
 
 body {
-    font-family: BYekan;
-    color: #333;
-    font-size: 13px;
     margin: 0;
 }
 
@@ -41,6 +38,8 @@ a:hover {
     background-repeat: no-repeat;
     display: flex;
     align-items: center;
+    font-family: BYekan;
+    font-size: 13px;
 }
 
 .inner {
@@ -248,14 +247,14 @@ select option[value=""][disabled] {
     color: red;
     position: absolute;
     right: 0px;
-    bottom: -30px;
+    bottom: -15px;
 }
 
 .toast {
     background-color: red;
     width: 100%;
     position: fixed;
-    top: 50px;
+    top: 100px;
     right: 50px;
     text-align: right;
 }

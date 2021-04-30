@@ -7,5 +7,5 @@ try {
     if (!fs.existsSync(path.join(__dirname, '../public/images/articles')))
         fs.mkdirSync(path.join(__dirname, '../public/images/articles'));
 } catch (error) {
-    return console.log(error);
+    console.log(error);
 }

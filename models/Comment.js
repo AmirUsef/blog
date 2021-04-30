@@ -1,21 +1,13 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const requiredFields = {
-    type: String,
-    required: true,
-    trim: true,
-    // maxlength: 30,
-};
-
 const CommentSchema = new Schema({
     text: {
-        ...requiredFields,
-        minlength: 10
-    },
-    createdAt: {
-        type: Date,
-        default: Date.now
+        type: String,
+        required: true,
+        trim: true,
+        minlength: 3,
+        maxlength: 100
     },
     owner: {
         type: Schema.Types.ObjectId,
@@ -26,39 +18,20 @@ const CommentSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "Article",
         required: true
+    },
+    confirmed: {
+        type: Boolean,
+        default: false
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now
     }
 });
 
-// UserSchema.pre('save', function(next) {
-//     const user = this
-//     if (this.isNew || this.isModified()) {
-//         console.log(1);
-//         bcrypt.genSalt(10, function(err, salt) {
-//             if (err) return next(err)
-//             bcrypt.hash(user.password, salt, function(err, hash) {
-//                 if (err) return next(err)
-//                 user.password = hash
-//                 next()
-//             });
-//         });
-//     } else
-//         next()
-// });
-
-// UserSchema.pre('updateOne', function(next) {
-//     let user = this.getUpdate()
-//     if (user.password) {
-//         bcrypt.genSalt(10, function(err, salt) {
-//             if (err) return next(err)
-//             bcrypt.hash(user.password, salt, function(err, hash) {
-//                 if (err) return next(err)
-//                 user.password = hash
-//                 next()
-//             });
-//         });
-//     } else
-//         next()
-
-// })
+CommentSchema.pre('find', function(next) {
+    this.populate('owner', { username: 1, avatar: 1, _id: 0 }).sort({ createdAt: -1 })
+    next()
+});
 
 module.exports = mongoose.model('Comment', CommentSchema);

@@ -1,12 +1,10 @@
 $(document).ready(function() {
     $("#submit").click(function() {
         if (validateInputs()) {
-            let user = { username: $("#input1").val().trim(), password: $("#input2").val() }
             $.ajax({
                 type: "POST",
                 url: "/auth/login",
-                data: user,
-                async: false,
+                data: { username: $("#input1").val().trim(), password: $("#input2").val().trim() },
                 success: function(result) {
                     window.location.href = `http://localhost:3000/user/dashboard`
                 },
@@ -24,15 +22,9 @@ $(document).ready(function() {
 })
 
 function validateInputs() {
-    let username = $("#input1").val();
-    let password = $("#input2").val();
-    if (username == "")
-        $("#error1").html("الزامی")
-    else
-        $("#error1").html("")
-    if (password == "")
-        $("#error2").html("الزامی")
-    else
-        $("#error2").html("")
-    return ($("#error1").html() == "" && $("#error2").html() == "")
+    const username = $("#input1").val();
+    const password = $("#input2").val();
+    username ? $("#error1").html("") : $("#error1").html("الزامی")
+    password ? $("#error2").html("") : $("#error2").html("الزامی")
+    return (username && password)
 }

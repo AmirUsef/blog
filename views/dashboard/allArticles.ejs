@@ -8,7 +8,7 @@
 
     <title>Articles</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/stylesheets/sidebar.css">
+    <link rel="stylesheet" href="/stylesheets/dashboard.css">
     <link rel="stylesheet" href="/stylesheets/articles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">
     <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
@@ -19,7 +19,7 @@
     <div class="wrapper">
         <%- include('../partials/sidebar') %>
             <div id="content">
-                <%- include('../partials/navbar') %>
+                <%- include('../partials/dashboard-navbar') %>
                     <div class="row">
                         <% for ( let i = 0; i < articles.length; i++ ) { %>
                             <div class="col-12 col-lg-6 mb-5">

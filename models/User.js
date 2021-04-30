@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const bcrypt = require('bcrypt');
 const Article = require('./Article')
+const Comment = require('./Comment')
 const fs = require('fs');
 const generalTools = require("../tools/general-tools");
 
@@ -63,8 +64,7 @@ const UserSchema = new Schema({
 });
 
 UserSchema.methods.toJSON = function() {
-    let user = this
-    user = user.toObject()
+    const user = this.toObject()
     delete user.__v
     delete user.password
     return user
@@ -83,35 +83,43 @@ UserSchema.methods.comparePassword = async function(pass) {
 
 UserSchema.pre('save', function(next) {
     const user = this
-    if (this.isNew || this.isModified())
+    if (this.isNew || this.isModified()) {
+        if (!user.password.match(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/)) {
+            const error = new Error()
+            error.name = "ValidationError"
+            error.message = "User validation failed: password: password is not valid"
+            throw error
+        }
         generalTools.hash(user, next)
-    else
+    } else
         next()
 });
 
 UserSchema.pre('updateOne', function(next) {
     this._update.lastUpdate = Date.now()
     let user = this._update
-    if (user.password)
+    if (user.password) {
+        if (!user.password.match(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/)) {
+            const error = new Error()
+            error.name = "ValidationError"
+            error.message = "User validation failed: password: password is not valid"
+            throw error
+        }
         generalTools.hash(user, next)
-    else
+    } else
         next()
 })
 
-UserSchema.pre('deleteOne', { document: true, query: false }, async function(next) {
+UserSchema.post('deleteOne', { document: true, query: false }, async function() {
     if (this.avatar != 'profile.png') {
         fs.unlink(`./public/images/avatars/${this.avatar}`, (err) => {
             if (err) console.log(err);
         })
     }
-    try {
-        const articles = await Article.find({ owner: this._id })
-        for (let index = 0; index < articles.length; index++)
-            await articles[index].deleteOne()
-    } catch (error) {
-        return res.status(500).json({ msg: "server error" })
-    }
-    next()
+    const articles = await Article.find({ owner: this._id })
+    for (let index = 0; index < articles.length; index++)
+        await articles[index].deleteOne()
+    await Comment.deleteMany({ owner: this._id })
 });
 
 module.exports = mongoose.model('User', UserSchema);

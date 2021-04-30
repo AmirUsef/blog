@@ -1,12 +1,11 @@
 const express = require("express")
 const router = express.Router()
-const userRouter = require('./user')
-const authRouter = require('./auth')
-const articleRouter = require('./article')
 const acc = require('../tools/access-control')
 
-router.use('/user', acc.loginChecker, userRouter)
-router.use('/auth', authRouter)
-router.use('/article', acc.loginChecker, articleRouter)
+router.get('/', (req, res) => res.render('home'))
+router.use('/auth', require('./auth'))
+router.use('/user', acc.isLoggedIn, require('./user'))
+router.use('/article', acc.isLoggedIn, require('./article'))
+router.use('/comment', acc.isLoggedIn, require('./comment'))
 
 module.exports = router;

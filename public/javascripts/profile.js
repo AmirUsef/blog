@@ -25,12 +25,10 @@ $(document).ready(function() {
             else if (!(/^[a-zA-Z\s]*$/).test($(".modal-body input").val()))
                 return $(".modal-body p").html("نام معتبر نیست")
 
-            updatedObject = { firstName: $(".modal-body input").val() }
             $.ajax({
                 type: "PUT",
                 url: `/user/${userId}`,
-                async: false,
-                data: updatedObject,
+                data: { firstName: $(".modal-body input").val() },
                 success: function(result) {
                     location.reload();
                 },
@@ -53,12 +51,10 @@ $(document).ready(function() {
             else if (!(/^[a-zA-Z\s]*$/).test($(".modal-body input").val()))
                 return $(".modal-body p").html("نام معتبر نیست")
 
-            updatedObject = { lastName: $(".modal-body input").val() }
             $.ajax({
                 type: "PUT",
                 url: `/user/${userId}`,
-                async: false,
-                data: updatedObject,
+                data: { lastName: $(".modal-body input").val() },
                 success: function(result) {
                     location.reload();
                 },
@@ -80,12 +76,11 @@ $(document).ready(function() {
                 return $(".modal-body p").html("الزامی")
             else if (!(/^09[0-9]{9}$/).test($(".modal-body input").val()))
                 return $(".modal-body p").html("تلفن همراه معتبر نیست")
-            updatedObject = { phoneNumber: $(".modal-body input").val() }
+
             $.ajax({
                 type: "PUT",
                 url: `/user/${userId}`,
-                async: false,
-                data: updatedObject,
+                data: { phoneNumber: $(".modal-body input").val() },
                 success: function(result) {
                     location.reload();
                 },
@@ -107,12 +102,10 @@ $(document).ready(function() {
         $(".modal-body").html(`<span class="d-flex flex-row-reverse"><label>:جنسیت </label><select><option value="male">Male</option><option value="female">Female</option></select><p></p></span>`)
         $('.modal-footer').html(`<button class="btn saveBtn">ثبت</button>`)
         $(".saveBtn").click(function() {
-            updatedObject = { gender: $(".modal-body select").val() }
             $.ajax({
                 type: "PUT",
                 url: `/user/${userId}`,
-                async: false,
-                data: updatedObject,
+                data: { gender: $(".modal-body select").val() },
                 success: function(result) {
                     location.reload();
                 },
@@ -132,9 +125,9 @@ $(document).ready(function() {
                                 <span class="d-flex flex-row-reverse"><label>:تایید پسوورد </label><input type="password"></input><p></p></span>`)
         $('.modal-footer').html(`<button class="btn saveBtn">ثبت</button>`)
         $(".saveBtn").click(function() {
-            let password = $(".modal-body input:eq(0)").val()
-            let newpassword = $(".modal-body input:eq(1)").val()
-            let confirmpass = $(".modal-body input:eq(2)").val()
+            const password = $(".modal-body input:eq(0)").val()
+            const newpassword = $(".modal-body input:eq(1)").val()
+            const confirmpass = $(".modal-body input:eq(2)").val()
             if (!password)
                 return $(".modal-body p:eq(0)").html("الزامی")
             else
@@ -151,12 +144,10 @@ $(document).ready(function() {
                 return $(".modal-body p:eq(2)").html("پسوورد های وارد شده یکسان نیست")
             else
                 $(".modal-body p:eq(2)").html("")
-            updatedObject = { password, newpassword }
             $.ajax({
                 type: "PUT",
                 url: `/user/${userId}`,
-                async: false,
-                data: updatedObject,
+                data: { password, newpassword },
                 success: function(result) {
                     window.location.href = 'http://localhost:3000/auth/login'
                 },

@@ -31,6 +31,7 @@ $(document).ready(function() {
             }
         }
     })
+    $(".note-editor").width("100%")
 
     function saveFile(file) {
         data = new FormData();
@@ -48,11 +49,39 @@ $(document).ready(function() {
             error: function(error) {
                 $('.toast').toast({ delay: 5000 });
                 $('.toast').toast('show')
-                if (error.status == 400)
-                    $(".toast-body").html("فرمت عکس نادرست است")
-                else
-                    $(".toast-body").html("خطای سرور")
+                error.status == 400 ? $(".toast-body").html("فرمت عکس نادرست است") : $(".toast-body").html("خطای سرور")
             }
         })
     }
+
+    $(".deleteComment").click(function() {
+        const id = $(this).attr("commentId")
+        $.ajax({
+            type: "DELETE",
+            url: `/comment/${id}`,
+            success: function(result) {
+                location.reload();
+            },
+            error: function(error) {
+                $('.toast').toast({ delay: 5000 });
+                $('.toast').toast('show')
+                $(".toast-body").html("خطای سرور")
+            }
+        });
+    })
+    $(".confirmComment").click(function() {
+        const id = $(this).attr("commentId")
+        $.ajax({
+            type: "PUT",
+            url: `/comment/${id}`,
+            success: function(result) {
+                location.reload();
+            },
+            error: function(error) {
+                $('.toast').toast({ delay: 5000 });
+                $('.toast').toast('show')
+                $(".toast-body").html("خطای سرور")
+            }
+        });
+    })
 })

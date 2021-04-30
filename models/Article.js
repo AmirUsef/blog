@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+const Comment = require('./Comment')
 const generalTools = require('../tools/general-tools')
 const rimraf = require("rimraf");
 const path = require('path')
@@ -43,6 +44,19 @@ ArticleSchema.methods.toJSON = function() {
     return article
 }
 
+ArticleSchema.methods.getComments = async function(conditions) {
+    this.comments = await Comment.find({ article: this._id, ...conditions });
+}
+
+ArticleSchema.methods.countComments = async function(conditions) {
+    this.comments = await Comment.countDocuments({ article: this._id, ...conditions })
+}
+
+ArticleSchema.pre(['find', 'findOne'], function(next) {
+    this.populate('owner', { firstName: 1, lastName: 1, avatar: 1 }).sort({ createdAt: -1 })
+    next()
+});
+
 ArticleSchema.pre('save', function(next) {
     generalTools.copyFiles(this._id, this.text, this.owner)
     this.text = this.text.replaceAll(`temp/${this.owner}-temp`, `articles/${this._id}`);
@@ -57,15 +71,11 @@ ArticleSchema.pre('updateOne', function(next) {
     next()
 })
 
-ArticleSchema.pre('deleteOne', { document: true, query: false }, function(next) {
+ArticleSchema.post('deleteOne', { document: true, query: false }, async function() {
     try {
         rimraf.sync(path.join(__dirname, `../public/images/articles/${this._id}`))
+        await Comment.deleteMany({ article: this._id })
     } catch (error) {}
-    next()
-        // Comment.deleteMany({ article: this._id }, (err, comments) => {
-        //     if (err) return res.status(500).json({ msg: "Server Error :)", err: err.message });
-        // });
 });
-
 
 module.exports = mongoose.model('Article', ArticleSchema);

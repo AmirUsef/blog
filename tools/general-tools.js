@@ -3,8 +3,11 @@ const path = require('path')
 const fs = require('fs')
 const rimraf = require("rimraf");
 const bcrypt = require('bcrypt');
-const config = require('../config/config');
 const generalTools = {};
+
+Array.prototype.isEqualTo = function(array) {
+    return this.every(field => array.includes(field)) && array.length === this.length
+}
 
 const avatarStorage = multer.diskStorage({
     destination: function(req, file, cb) {
@@ -29,13 +32,8 @@ const articleStorage = multer.diskStorage({
     destination: function(req, file, cb) {
         const dir = path.join(__dirname, `../public/images/temp/${req.session.user._id}-temp`)
         try {
-            if (!fs.existsSync(dir)) {
+            if (!fs.existsSync(dir))
                 fs.mkdirSync(dir);
-                setTimeout(function() {
-                    if (fs.existsSync(dir))
-                        rimraf.sync(dir)
-                }, config.sessionExpire);
-            }
         } catch (error) {}
         cb(null, dir)
     },
@@ -47,7 +45,6 @@ const articleStorage = multer.diskStorage({
 generalTools.uploadArticleImage = multer({
     storage: articleStorage,
     fileFilter: function(req, file, cb) {
-        console.log("file:" + file);
         if (file.mimetype === 'image/png' || file.mimetype === 'image/jpg' || file.mimetype === 'image/jpeg')
             cb(null, true)
         else
@@ -55,7 +52,7 @@ generalTools.uploadArticleImage = multer({
     }
 })
 
-generalTools.copyFiles = function(dirName, text, id) {
+generalTools.copyFiles = (dirName, text, id) => {
     if (!fs.existsSync(path.join(__dirname, '../public/images/articles/' + dirName)))
         fs.mkdirSync(path.join(__dirname, '../public/images/articles/' + dirName))
 
@@ -70,7 +67,7 @@ generalTools.copyFiles = function(dirName, text, id) {
     }
 }
 
-generalTools.deleteFiles = function(dirName, text) {
+generalTools.deleteFiles = (dirName, text) => {
     try {
         files = fs.readdirSync(path.join(__dirname, `../public/images/articles/${dirName}`))
         files.forEach(file => {
@@ -94,10 +91,10 @@ generalTools.hash = (user, next) => {
 generalTools.generatePassword = () => {
     const result = []
     let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
-    for (let i = 0; i < 4; i++)
+    for (let i = 0; i < 4; i++) {
         result.push(characters.charAt(Math.floor(Math.random() * characters.length)));
-    for (let i = 0; i < 4; i++)
         result.push(Math.floor(Math.random() * 10));
+    }
     return result.join('');
 }
 

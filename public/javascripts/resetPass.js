@@ -1,11 +1,12 @@
 $(document).ready(function() {
     $("#submit").click(function() {
-        if (validateInputs()) {
+        const username = $("#input1").val();
+        username ? $("#error1").html("") : $("#error1").html("الزامی")
+        if (username) {
             $.ajax({
                 type: "POST",
                 url: "/auth/resetPass",
                 data: { username: $("#input1").val().trim() },
-                async: false,
                 success: function(result) {
                     $('.toast').css("background-color", "green").toast({ delay: 3000 });
                     $('.toast').toast('show')
@@ -25,12 +26,3 @@ $(document).ready(function() {
         }
     })
 })
-
-function validateInputs() {
-    let username = $("#input1").val();
-    if (username == "")
-        $("#error1").html("الزامی")
-    else
-        $("#error1").html("")
-    return ($("#error1").html() == "")
-}

@@ -8,7 +8,7 @@
 
     <title>Articles</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/stylesheets/sidebar.css">
+    <link rel="stylesheet" href="/stylesheets/dashboard.css">
     <link rel="stylesheet" href="/stylesheets/articles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">
     <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
@@ -19,7 +19,7 @@
     <div class="wrapper">
         <%- include('../partials/sidebar') %>
             <div id="content">
-                <%- include('../partials/navbar') %>
+                <%- include('../partials/dashboard-navbar') %>
                     <div class="row">
                         <% for ( let i = 0; i < articles.length; i++ ) { %>
                             <div class="col-12 col-lg-6 mb-5">
@@ -35,6 +35,14 @@
                                 <img src="/images/avatars/<%= articles[i].owner.avatar %>" class="profile" />
                             </div>
                             <div class="card-content">
+                                <% if (articles[i].comments != 0) { %>
+                                    <div id="comments">
+                                        <span class="fa-stack fa-5x has-badge" data-count="<%= articles[i].comments %>" >
+                                          <i class="fa fa-circle fa-stack-2x"></i>
+                                          <i class="fa fa-bell fa-stack-1x fa-inverse"></i>
+                                        </span>
+                                      </div>
+                                <% } %>
                                 <h2><%= articles[i].title %><small><%= articles[i].owner.firstName + " " + articles[i].owner.lastName %></small></h2>
                                 <p><%= articles[i].createdAt.toLocaleString("fa-IR", {dateStyle : "short"}) %> </p>
                                 <div class="d-flex flex-row justify-content-between">
@@ -43,7 +51,6 @@
                                     <% if (role == "blogger") { %>
                                         <a class="btn btn-primary second-btn edit" href="/article/edit/<%= articles[i]._id %>">ویرایش</a>
                                     <% } %>
-                                    
                                 </div>
                             </div>
                         </div>

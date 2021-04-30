@@ -12,15 +12,15 @@ const {
     logout
 } = require("../controllers/auth.controller");
 
-router.get("/register", acc.sessionChecker, rgisterPage);
+router.get("/register", acc.hasSession, rgisterPage);
 
 router.post("/register", register);
 
-router.get("/login", acc.sessionChecker, loginPage);
+router.get("/login", acc.hasSession, loginPage);
 
 router.post("/login", login);
 
-router.get('/resetPass', acc.sessionChecker, resetPassPage)
+router.get('/resetPass', acc.hasSession, resetPassPage)
 
 router.post('/resetPass', acc.resetPass, resetPass)
 

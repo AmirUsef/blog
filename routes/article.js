@@ -3,8 +3,7 @@ const router = express.Router()
 const acc = require('../tools/access-control')
 
 const {
-    getAllArticles,
-    getUserArticles,
+    getArticles,
     editArticlePage,
     getArticle,
     addArticle,
@@ -13,11 +12,11 @@ const {
     deleteArticle
 } = require("../controllers/article.controller.js")
 
-router.get("/", getAllArticles)
+router.get("/", getArticles)
 
-router.get("/articles/:id", acc.articles, getUserArticles)
+router.get("/user/:id", acc.adminOwner, getArticles)
 
-router.get("/edit/:id", acc.editArticle, editArticlePage)
+router.get("/edit/:id", acc.isUser, acc.article, editArticlePage)
 
 router.get("/:id", getArticle)
 
@@ -25,8 +24,8 @@ router.post("/", addArticle)
 
 router.post("/image", addImage)
 
-router.post("/:id", acc.editArticle, editArticle)
+router.post("/:id", acc.isUser, acc.article, editArticle)
 
-router.delete("/:id", acc.deleteArticle, deleteArticle)
+router.delete("/:id", acc.article, deleteArticle)
 
 module.exports = router;
