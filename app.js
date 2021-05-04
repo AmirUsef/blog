@@ -11,12 +11,15 @@ require('./tools/initializer')
 
 const app = express()
 
-mongoose.connect(process.env.DATABASE_LOCAL, {
+mongoose.connect(process.env.MONGODB_URI, {
         useNewUrlParser: true,
         useUnifiedTopology: true
     },
     (err) => {
-        if (err) return console.log("Connection to database failed")
+        if (err) {
+            console.log(err);
+            return console.log("Connection to database failed")
+        }
         console.log("Connected to database...")
     }
 )

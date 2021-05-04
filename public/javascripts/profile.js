@@ -135,7 +135,7 @@ $(document).ready(function() {
             if (!newpassword)
                 return $(".modal-body p:eq(1)").html("الزامی")
             else if (!(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/).test(newpassword))
-                return $(".modal-body p:eq(1)").html("پسوورد باید حداقل 8 کاراکتر شامل حداقل 1 حرف و 1 عدد باشد")
+                return $(".modal-body p:eq(1)").html("پسوورد باید حداقل 8 کاراکتر شامل حرف و عدد باشد")
             else if (password == newpassword)
                 return $(".modal-body p:eq(1)").html("پسوورد جدید و قدیم یکسان هستند")
             else

@@ -49,13 +49,13 @@
                                     <%= users[i].phoneNumber %>
                                 </td>
                                 <td>
-                                    <a class="btn btn-primary second-btn" href="/article/articles/<%= users[i]._id %>">مقالات</a>
+                                    <a class="btn btn-primary second-btn" href="/article/user/<%= users[i]._id %>">مقالات</a>
                                 </td>
                                 <td>
                                     <a class="btn btn-primary second-btn reset" username="<%= users[i].username %>">ریست پسوورد</a>
                                 </td>
                                 <td>
-                                    <a class="btn btn-primary second-btn delete" userId="<%= users[i]._id %>">حذف</a>
+                                    <a class="btn btn-primary second-btn deleteUser bg-danger" userId="<%= users[i]._id %>">حذف</a>
                                 </td>
                             </tr>
                             <% } %>

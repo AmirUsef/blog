@@ -39,14 +39,12 @@ module.exports.updateAvatar = catchError(async(req, res, next) => {
 
             return res.status(400).json({ msg: err.message })
         }
-        if (req.session.user.role != 'admin' && req.session.user.avatar != 'profile.png') {
+        if (req.session.user.avatar != 'profile.png') {
             fs.unlink(`./public/images/avatars/${req.session.user.avatar}`, (err) => {
                 if (err) console.log(err);
             })
         }
-        user = await User.findByIdAndUpdate({ _id: req.params.id }, { avatar: req.file.filename }, { new: true, runValidators: true, useFindAndModify: false })
-        if (req.session.user.role === 'blogger')
-            req.session.user = user
+        req.session.user = await User.findByIdAndUpdate({ _id: req.params.id }, { avatar: req.file.filename }, { new: true, runValidators: true, useFindAndModify: false })
         res.redirect('/user/dashboard')
     })
 })

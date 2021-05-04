@@ -34,7 +34,7 @@ $(document).ready(function() {
         $(".first").html(`<li><a href="/user/AllUsers">کاربران</a></li>`)
         $(".delete").css("background-color", "red")
         $(".reset").css("background-color", "green")
-        $(".delete").click(function() {
+        $(".deleteUser").click(function() {
             const id = $(this).attr("userId")
             $.ajax({
                 type: "DELETE",

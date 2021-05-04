@@ -247,7 +247,7 @@ select option[value=""][disabled] {
     color: red;
     position: absolute;
     right: 0px;
-    bottom: -15px;
+    top: 20px;
 }
 
 .toast {

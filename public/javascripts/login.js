@@ -13,7 +13,7 @@ $(document).ready(function() {
                     $('.toast').toast('show')
                     if (error.status == 404)
                         $(".toast-body").html("اکانت یافت نشد")
-                    if (error.status == 500)
+                    else
                         $(".toast-body").html("خطای سرور")
                 }
             });
